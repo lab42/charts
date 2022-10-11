@@ -24,7 +24,7 @@ podAnnotations: {}
 podSecurityContext: {}
   # fsGroup: 2000
 
-securityContext: {}
+securityContext:
   capabilities:
     drop:
     - ALL
@@ -52,7 +52,7 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-resources: {}
+resources: 
   limits:
     cpu: 100m
     memory: 100Mi
