@@ -58,12 +58,13 @@ jobs:
         path: ./mage
         key: ${{ runner.os }}-mage-${{ hashFiles('./mage') }}
 
-    - run: ./mage package
+    - run: ./mage -v package
     - run: ./mage -v index
+    - run
     - run: |
         cd charts
         git config --global user.name $GITHUB_ACTOR
         git config --global user.email "username@users.noreply.github.com"
         git add -A
-        git commit -m $CI_COMMIT_MESSAGE
+        git commit -m $GITHUB_SHA
         git push
