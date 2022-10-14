@@ -15,8 +15,9 @@ jobs:
       with:
         go-version: '1.19'
 
+    - run: go get
     - run: go install github.com/magefile/mage@latest
 
     - run: mage lint
     - run: mage build
-    - run: mage push
+    - run: mage -v push
