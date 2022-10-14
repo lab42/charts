@@ -15,7 +15,7 @@ jobs:
         go-version: '1.19'
 
     - run: go get
-    - run: go install github.com/magefile/mage@lates
+    - run: go install github.com/magefile/mage@latest
 
   lint:
     runs-on: ubuntu-latest
