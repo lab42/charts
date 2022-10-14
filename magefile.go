@@ -43,7 +43,7 @@ func Package() error {
 
 	for _, helmChart := range helmCharts {
 		pkg := action.NewPackage()
-		pkg.Destination = "./packages"
+		pkg.Destination = "./charts"
 
 		if _, err := pkg.Run(helmChart, make(map[string]interface{})); err != nil {
 			return err
