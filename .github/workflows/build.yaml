@@ -23,12 +23,12 @@ jobs:
         key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
 
     - run: go install github.com/magefile/mage@latest
-    - run: mage -compile ./mage
+    - run: mage -compile ~/go/bin/mage
 
     - uses: actions/cache@v3
       with:
-        path: ./mage
-        key: ${{ runner.os }}-mage-${{ hashFiles('./mage') }}
+        path: ~/go/bin/mage
+        key: ${{ runner.os }}-mage-${{ hashFiles('magefile.go') }}
 
   lint:
     runs-on: ubuntu-latest
@@ -38,10 +38,10 @@ jobs:
 
     - uses: actions/cache@v3
       with:
-        path: ./mage
-        key: ${{ runner.os }}-mage-${{ hashFiles('./mage') }}
+        path: ~/go/bin/mage
+        key: ${{ runner.os }}-mage-${{ hashFiles('magefile.go') }}
 
-    - run: ./mage lint
+    - run: ~/go/bin/mage lint
 
   Update-registry:
     runs-on: ubuntu-latest
@@ -55,11 +55,11 @@ jobs:
 
     - uses: actions/cache@v3
       with:
-        path: ./mage
-        key: ${{ runner.os }}-mage-${{ hashFiles('./mage') }}
+        path: ~/go/bin/mage
+        key: ${{ runner.os }}-mage-${{ hashFiles('magefile.go') }}
 
-    - run: ./mage -v package
-    - run: ./mage -v index
+    - run: ~/go/bin/mage -v package
+    - run: ~/go/bin/mage -v index
     - run: ls -al charts
     - run: |
         cd charts
