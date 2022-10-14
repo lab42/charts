@@ -1,4 +1,5 @@
-//go:generate go run gen.go
+//go:build mage
+// +build mage
 
 package main
 
@@ -14,21 +15,33 @@ import (
 	"github.com/rs/zerolog/log"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/registry"
+	// mg contains helpful utility functions, like Deps
 )
 
-func main() {
+// Lint Helm packages
+func Lint() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	log.Info().Msg("Processing packages")
 
 	helmCharts, _ := filepath.Glob("./src/*")
 	linter := action.NewLint()
-	log.Info().Msg("Linting")
 	result := linter.Run(helmCharts, make(map[string]interface{}))
 
 	for _, err := range result.Errors {
 		if err != nil {
-			log.Error().Err(err)
+			return err
 		}
+	}
+
+	return nil
+}
+
+// Build Helm packages
+func Build() error {
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+
+	helmCharts, err := filepath.Glob("./src/*")
+	if err != nil {
+		return err
 	}
 
 	for _, helmChart := range helmCharts {
@@ -36,17 +49,23 @@ func main() {
 		pkg.Destination = "./packages"
 
 		if _, err := pkg.Run(helmChart, make(map[string]interface{})); err != nil {
-			log.Error().Err(err)
+			return err
 		}
 		log.Info().Msg("Packaged: " + helmChart)
 	}
+
+	return nil
+}
+
+func Push() error {
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	var loginOptions []registry.LoginOption
 	loginOptions = append(loginOptions, registry.LoginOptBasicAuth(os.Getenv("HELM_USERNAME"), os.Getenv("HELM_PASSWORD")))
 
 	client, err := registry.NewClient()
 	if err != nil {
-		log.Error().Err(err)
+		return err
 	}
 	client.Login("ghcr.io/lab42/charts", loginOptions...)
 
@@ -56,7 +75,7 @@ func main() {
 	for _, helmPackage := range helmPackages {
 		b, err := ioutil.ReadFile(helmPackage)
 		if err != nil {
-			log.Error().Err(err)
+			return err
 		}
 
 		helmPackageVersion := versionPattern.FindString(helmPackage)
@@ -64,10 +83,12 @@ func main() {
 
 		info, err := client.Push(b, fmt.Sprintf("ghcr.io/lab42/charts/%s:%s", strings.TrimPrefix(helmPackageName, "packages/"), helmPackageVersion))
 		if err != nil {
-			log.Info().Err(err)
+			return err
 		}
 
 		log.Info().Msg("Pushed: " + info.Ref)
 		log.Info().Msg("Digest: " + info.Manifest.Digest)
 	}
+
+	return nil
 }
