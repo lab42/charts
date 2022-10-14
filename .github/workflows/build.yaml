@@ -49,7 +49,7 @@ jobs:
 
     - run: ~/go/bin/mage lint
 
-  package:
+  Update-registry:
     runs-on: ubuntu-latest
     needs: setup
     steps:
@@ -68,4 +68,10 @@ jobs:
 
     - run: ~/go/bin/mage package
     - run: ~/go/bin/mage index
-    - run: ~/go/bin/mage -v push
+    - run: |
+        cd charts
+        git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
+        git config --global user.email "username@users.noreply.github.com"
+        git add -A
+        git commit -m "${{ env.CI_COMMIT_MESSAGE }}"
+        git push
