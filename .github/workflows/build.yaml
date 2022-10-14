@@ -67,7 +67,7 @@ jobs:
           ${{ runner.os }}-mage-
 
     - run: ~/go/bin/mage package
-    - run: ~/go/bin/mage index
+    - run: ~/go/bin/mage -v index
     - run: |
         cd charts
         git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
