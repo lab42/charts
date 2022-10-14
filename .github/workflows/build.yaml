@@ -21,16 +21,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
     steps:
-    - run: $GOPATH/bin/mage lint
+    - run: go/bin/mage lint
 
   package:
     runs-on: ubuntu-latest
     needs: setup
     steps:
-    - run: $GOPATH/bin/mage package
+    - run: go/bin/mage package
 
   push:
     runs-on: ubuntu-latest
     needs: [lint, package]
     steps:
-    - run: $GOPATH/bin/mage -v push
+    - run: go/bin/mage -v push
