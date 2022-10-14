@@ -11,10 +11,12 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/registry"
+	"helm.sh/helm/v3/pkg/repo"
 	// mg contains helpful utility functions, like Deps
 )
 
@@ -57,6 +59,40 @@ func Package() error {
 	return nil
 }
 
+// Index Helm packages
+func Index() error {
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+
+	out := filepath.Join("charts", "index.yaml")
+	mergeTo := ""
+
+	if _, err := os.Stat(out); err == nil {
+		mergeTo = out
+	}
+
+	i, err := repo.IndexDirectory("charts", "https://lab42.github.io/charts")
+	if err != nil {
+		return err
+	}
+
+	if mergeTo != "" {
+		// if index.yaml is missing then create an empty one to merge into
+		var i2 *repo.IndexFile
+		if _, err := os.Stat(mergeTo); os.IsNotExist(err) {
+			i2 = repo.NewIndexFile()
+			i2.WriteFile(mergeTo, 0644)
+		} else {
+			i2, err = repo.LoadIndexFile(mergeTo)
+			if err != nil {
+				return errors.Wrap(err, "merge failed")
+			}
+		}
+		i.Merge(i2)
+	}
+	i.SortEntries()
+	return i.WriteFile(out, 0644)
+}
+
 func Push() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
@@ -67,7 +103,7 @@ func Push() error {
 	if err != nil {
 		return err
 	}
-	client.Login("ghcr.io/lab42/charts", loginOptions...)
+	client.Login("https://lab42.github.io/charts", loginOptions...)
 
 	versionPattern := regexp.MustCompile(`([0-9]+\.[0-9]+\.[0-9]+)`)
 	helmPackages, _ := filepath.Glob("./packages/*.tgz")
@@ -81,7 +117,7 @@ func Push() error {
 		helmPackageVersion := versionPattern.FindString(helmPackage)
 		helmPackageName := strings.TrimSuffix(helmPackage, fmt.Sprintf("-%s.tgz", helmPackageVersion))
 
-		info, err := client.Push(b, fmt.Sprintf("ghcr.io/lab42/charts/%s:%s", strings.TrimPrefix(helmPackageName, "packages/"), helmPackageVersion))
+		info, err := client.Push(b, fmt.Sprintf("https://lab42.github.io/charts/%s:%s", strings.TrimPrefix(helmPackageName, "packages/"), helmPackageVersion))
 		if err != nil {
 			return err
 		}
