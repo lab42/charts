@@ -64,7 +64,7 @@ func main() {
 
 		info, err := client.Push(b, fmt.Sprintf("ghcr.io/lab42/charts/%s:%s", strings.TrimPrefix(helmPackageName, "packages/"), helmPackageVersion))
 		if err != nil {
-			log.Error().Err(err)
+			log.Info().Err(err)
 		}
 
 		log.Info().Msg("Pushed: " + info.Ref)
