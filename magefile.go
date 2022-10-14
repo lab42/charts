@@ -4,18 +4,13 @@
 package main
 
 import (
-	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
-	"regexp"
-	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"helm.sh/helm/v3/pkg/action"
-	"helm.sh/helm/v3/pkg/registry"
 	"helm.sh/helm/v3/pkg/repo"
 	// mg contains helpful utility functions, like Deps
 )
@@ -91,40 +86,4 @@ func Index() error {
 	}
 	i.SortEntries()
 	return i.WriteFile(out, 0644)
-}
-
-func Push() error {
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-
-	var loginOptions []registry.LoginOption
-	loginOptions = append(loginOptions, registry.LoginOptBasicAuth(os.Getenv("HELM_USERNAME"), os.Getenv("HELM_PASSWORD")))
-
-	client, err := registry.NewClient()
-	if err != nil {
-		return err
-	}
-	client.Login("https://lab42.github.io/charts", loginOptions...)
-
-	versionPattern := regexp.MustCompile(`([0-9]+\.[0-9]+\.[0-9]+)`)
-	helmPackages, _ := filepath.Glob("./packages/*.tgz")
-
-	for _, helmPackage := range helmPackages {
-		b, err := ioutil.ReadFile(helmPackage)
-		if err != nil {
-			return err
-		}
-
-		helmPackageVersion := versionPattern.FindString(helmPackage)
-		helmPackageName := strings.TrimSuffix(helmPackage, fmt.Sprintf("-%s.tgz", helmPackageVersion))
-
-		info, err := client.Push(b, fmt.Sprintf("https://lab42.github.io/charts/%s:%s", strings.TrimPrefix(helmPackageName, "packages/"), helmPackageVersion))
-		if err != nil {
-			return err
-		}
-
-		log.Info().Msg("Pushed: " + info.Ref)
-		log.Info().Msg("Digest: " + info.Manifest.Digest)
-	}
-
-	return nil
 }
