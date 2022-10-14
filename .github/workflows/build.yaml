@@ -14,80 +14,53 @@ jobs:
       with:
         go-version: '1.19'
 
+    - run: mage -compile ~/go/bin/mage
+
     - uses: actions/cache@v3
       with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
+        path: ~/go/bin/mage
+        key: ${{ runner.os }}-mage-${{ hashFiles('~/go/bin/mage') }}
         restore-keys: |
-          ${{ runner.os }}-golang-
-
-    - run: go get
+          ${{ runner.os }}-mage-
 
   lint:
     runs-on: ubuntu-latest
     needs: setup
     steps:
-    - uses: actions/checkout@v3
-
-    - uses: actions/setup-go@v3
-      with:
-        go-version: '1.19'
-
     - uses: actions/cache@v3
       with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
+        path: ~/go/bin/mage
+        key: ${{ runner.os }}-mage-${{ hashFiles('~/go/bin/mage') }}
         restore-keys: |
-          ${{ runner.os }}-golang-
-    - run: go install github.com/magefile/mage@latest
+          ${{ runner.os }}-mage-
 
+    - uses: actions/checkout@v3
     - run: ~/go/bin/mage lint
 
   package:
     runs-on: ubuntu-latest
     needs: setup
     steps:
-    - uses: actions/checkout@v3
-
-    - uses: actions/setup-go@v3
-      with:
-        go-version: '1.19'
-
     - uses: actions/cache@v3
       with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
+        path: ~/go/bin/mage
+        key: ${{ runner.os }}-mage-${{ hashFiles('~/go/bin/mage') }}
         restore-keys: |
-          ${{ runner.os }}-golang-
-    - run: go install github.com/magefile/mage@latest
+          ${{ runner.os }}-mage-
 
+    - uses: actions/checkout@v3
     - run: ~/go/bin/mage package
 
   push:
     runs-on: ubuntu-latest
     needs: [lint, package]
     steps:
-    - uses: actions/checkout@v3
-
-    - uses: actions/setup-go@v3
-      with:
-        go-version: '1.19'
-
     - uses: actions/cache@v3
       with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
+        path: ~/go/bin/mage
+        key: ${{ runner.os }}-mage-${{ hashFiles('~/go/bin/mage') }}
         restore-keys: |
-          ${{ runner.os }}-golang-
+          ${{ runner.os }}-mage-
 
-    - run: go install github.com/magefile/mage@latest
-
+    - uses: actions/checkout@v3
     - run: ~/go/bin/mage -v push
