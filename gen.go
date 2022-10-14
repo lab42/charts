@@ -5,6 +5,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -41,8 +42,7 @@ func main() {
 	}
 
 	var loginOptions []registry.LoginOption
-	loginOptions = append(loginOptions, registry.LoginOptInsecure(true))
-	loginOptions = append(loginOptions, registry.LoginOptBasicAuth("DanyHenriquez", "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"))
+	loginOptions = append(loginOptions, registry.LoginOptBasicAuth(os.Getenv("HELM_USERNAME"), os.Getenv("HELM_PASSWORD")))
 
 	client, err := registry.NewClient()
 	if err != nil {
