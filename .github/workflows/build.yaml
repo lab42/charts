@@ -24,7 +24,6 @@ jobs:
           ${{ runner.os }}-golang-
 
     - run: go get
-    - run: go install github.com/magefile/mage@latest
 
   lint:
     runs-on: ubuntu-latest
@@ -38,6 +37,7 @@ jobs:
         key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-golang-
+    - run: go install github.com/magefile/mage@latest
     - run: ~/go/bin/mage lint
 
   package:
@@ -52,6 +52,7 @@ jobs:
         key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-golang-
+    - run: go install github.com/magefile/mage@latest
     - run: ~/go/bin/mage package
 
   push:
@@ -66,4 +67,5 @@ jobs:
         key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-golang-
+    - run: go install github.com/magefile/mage@latest
     - run: ~/go/bin/mage -v push
