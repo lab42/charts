@@ -36,7 +36,7 @@ func Lint() error {
 }
 
 // Build Helm packages
-func Build() error {
+func Package() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	helmCharts, err := filepath.Glob("./src/*")
