@@ -60,7 +60,7 @@ jobs:
 
     - run: ./mage -v package
     - run: ./mage -v index
-    - run
+    - run: ls -al charts
     - run: |
         cd charts
         git config --global user.name $GITHUB_ACTOR
