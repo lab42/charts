@@ -30,6 +30,11 @@ jobs:
     needs: setup
     steps:
     - uses: actions/checkout@v3
+
+    - uses: actions/setup-go@v3
+      with:
+        go-version: '1.19'
+
     - uses: actions/cache@v3
       with:
         path: |
@@ -39,6 +44,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-golang-
     - run: go install github.com/magefile/mage@latest
+
     - run: ~/go/bin/mage lint
 
   package:
@@ -46,6 +52,11 @@ jobs:
     needs: setup
     steps:
     - uses: actions/checkout@v3
+
+    - uses: actions/setup-go@v3
+      with:
+        go-version: '1.19'
+
     - uses: actions/cache@v3
       with:
         path: |
@@ -55,6 +66,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-golang-
     - run: go install github.com/magefile/mage@latest
+
     - run: ~/go/bin/mage package
 
   push:
@@ -62,6 +74,11 @@ jobs:
     needs: [lint, package]
     steps:
     - uses: actions/checkout@v3
+
+    - uses: actions/setup-go@v3
+      with:
+        go-version: '1.19'
+
     - uses: actions/cache@v3
       with:
         path: |
@@ -70,5 +87,7 @@ jobs:
         key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-golang-
+
     - run: go install github.com/magefile/mage@latest
+
     - run: ~/go/bin/mage -v push
