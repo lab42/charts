@@ -19,6 +19,7 @@ jobs:
         path: |
           ~/.cache/go-build
           ~/go/pkg/mod
+          ~/.magefile
         key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-golang-
