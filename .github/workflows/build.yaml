@@ -6,44 +6,32 @@ on:
     - 'main'
 
 jobs:
-  lint:
+  setup:
     runs-on: ubuntu-latest
+    needs: setup
     steps:
     - uses: actions/checkout@v3
-
     - uses: actions/setup-go@v3
       with:
         go-version: '1.19'
 
     - run: go get
-    - run: go install github.com/magefile/mage@latest
+    - run: go install github.com/magefile/mage@lates
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
     - run: mage lint
 
   package:
     runs-on: ubuntu-latest
+    needs: setup
     steps:
-    - uses: actions/checkout@v3
-
-    - uses: actions/setup-go@v3
-      with:
-        go-version: '1.19'
-
-    - run: go get
-    - run: go install github.com/magefile/mage@latest
     - run: mage package
 
   push:
     runs-on: ubuntu-latest
-    needs:
-    - lint
-    - build
+    needs: [lint, build]
     steps:
-    - uses: actions/checkout@v3
-
-    - uses: actions/setup-go@v3
-      with:
-        go-version: '1.19'
-
-    - run: go get
-    - run: go install github.com/magefile/mage@latest
     - run: mage -v push
