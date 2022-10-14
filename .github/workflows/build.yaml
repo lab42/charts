@@ -65,5 +65,5 @@ jobs:
         git config --global user.name $GITHUB_ACTOR
         git config --global user.email "username@users.noreply.github.com"
         git add -A
-        git commit -m $CI_COMMIT_MESSAGE }}
+        git commit -m $CI_COMMIT_MESSAGE
         git push
