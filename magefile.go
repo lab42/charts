@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/go-git/go-git/v5"
@@ -85,6 +86,7 @@ func Update() error {
 			Author: &object.Signature{
 				Name:  "Dany Henriquez",
 				Email: "danyhenriquez86@gmail.com",
+				When:  time.Now(),
 			},
 		},
 	)
