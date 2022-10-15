@@ -75,6 +75,10 @@ func Update() error {
 
 	workTree, err := repository.Worktree()
 	workTree.AddGlob("./charts/*")
+	if _, err := workTree.Commit(os.Getenv("GITHUB_SHA"), &git.CommitOptions{}); err != nil {
+		return nil
+	}
+
 	repository.Push(&git.PushOptions{
 		Auth:       auth,
 		RemoteName: "origin",
