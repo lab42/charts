@@ -43,23 +43,6 @@ type HelmChart struct {
 	Version     string `yaml:"version"`
 }
 
-func newClient() (*registry.Client, error) {
-	loginOptions := []registry.LoginOption{
-		registry.LoginOptBasicAuth(os.Getenv("USERNAME"), os.Getenv("TOKEN")),
-	}
-
-	client, err := registry.NewClient(registry.ClientOptDebug(true), registry.ClientOptEnableCache(false))
-	if err != nil {
-		return client, err
-	}
-
-	if err := client.Login("ghcr.io/lab42/charts", loginOptions...); err != nil {
-		return client, err
-	}
-
-	return client, nil
-}
-
 // Return Helm charts info
 func chartInfo(glob string) ([]HelmChart, error) {
 	out := []HelmChart{}
@@ -111,9 +94,16 @@ func Build() error {
 }
 
 func Push() error {
-	client, err := newClient()
+	loginOptions := []registry.LoginOption{
+		registry.LoginOptBasicAuth(os.Getenv("USERNAME"), os.Getenv("TOKEN")),
+	}
+
+	client, err := registry.NewClient(registry.ClientOptDebug(true), registry.ClientOptEnableCache(false))
 	if err != nil {
-		log.Error().Err(err)
+		return err
+	}
+
+	if err := client.Login("ghcr.io/lab42/charts", loginOptions...); err != nil {
 		return err
 	}
 
