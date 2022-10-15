@@ -40,15 +40,10 @@ func Lint() error {
 func Update() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
-	auth := &http.BasicAuth{
-		Username: strings.TrimSuffix(os.Getenv("USERNAME"), "\n"),
-		Password: strings.TrimSuffix(os.Getenv("TOKEN"), "\n"),
-	}
-
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
 		URL:      "https://github.com/lab42/registry.git",
 		Progress: os.Stdout,
-		Auth:     auth,
+		Auth:     &http.BasicAuth{Username: strings.TrimSuffix(os.Getenv("USERNAME"), "\n"), Password: strings.TrimSuffix(os.Getenv("TOKEN"), "\n")},
 	})
 	spew.Dump(repository)
 	if err != nil {
@@ -82,7 +77,7 @@ func Update() error {
 
 	repository.Push(&git.PushOptions{
 		Progress: os.Stdout,
-		Auth:     auth,
+		Auth:     &http.BasicAuth{Username: strings.TrimSuffix(os.Getenv("USERNAME"), "\n"), Password: strings.TrimSuffix(os.Getenv("TOKEN"), "\n")},
 	})
 	return nil
 }
