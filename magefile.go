@@ -27,6 +27,7 @@ func Lint() error {
 
 	for _, err := range result.Errors {
 		if err != nil {
+			log.Error().Err(err)
 			return err
 		}
 	}
@@ -47,12 +48,16 @@ func newClient() (*registry.Client, error) {
 		registry.LoginOptBasicAuth(os.Getenv("USERNAME"), os.Getenv("TOKEN")),
 	}
 
-	client, err := registry.NewClient()
+	client, err := registry.NewClient(registry.ClientOptDebug(true), registry.ClientOptEnableCache(false))
 	if err != nil {
 		return client, err
 	}
 
-	return client, client.Login("ghcr.io/lab42/charts", loginOptions...)
+	if err := client.Login("ghcr.io/lab42/charts", loginOptions...); err != nil {
+		return client, err
+	}
+
+	return client, nil
 }
 
 // Return Helm charts info
@@ -87,6 +92,7 @@ func chartInfo(glob string) ([]HelmChart, error) {
 func Build() error {
 	helmCharts, err := chartInfo("./src/*")
 	if err != nil {
+		log.Error().Err(err)
 		return err
 	}
 
@@ -95,6 +101,7 @@ func Build() error {
 		pkg.Destination = "./charts"
 
 		if _, err := pkg.Run(fmt.Sprintf("./src/%s", helmChartInfo.Name), make(map[string]interface{})); err != nil {
+			log.Error().Err(err)
 			return err
 		}
 		log.Info().Msg(fmt.Sprintf("Packaged: %s %s", helmChartInfo.Name, helmChartInfo.Version))
@@ -106,23 +113,28 @@ func Build() error {
 func Push() error {
 	client, err := newClient()
 	if err != nil {
+		log.Error().Err(err)
 		return err
 	}
 
 	helmCharts, err := chartInfo("./src/*")
 	if err != nil {
+		log.Error().Err(err)
 		return err
 	}
 
+	fmt.Println(os.Getenv("TOKEN"))
 	for _, helmChartInfo := range helmCharts {
 		b, err := ioutil.ReadFile(fmt.Sprintf("./charts/%s-%s.tgz", helmChartInfo.Name, helmChartInfo.Version))
 		if err != nil {
 			log.Error().Err(err)
+			return err
 		}
 
 		info, err := client.Push(b, fmt.Sprintf("ghcr.io/lab42/charts/%s:%s", helmChartInfo.Name, helmChartInfo.Version))
 		if err != nil {
 			log.Error().Err(err)
+			return err
 		}
 
 		log.Info().Msg("Pushed: " + info.Ref)
