@@ -4,8 +4,10 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
@@ -39,8 +41,8 @@ func Update() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	auth := &http.BasicAuth{
-		Username: os.Getenv("USERNAME"),
-		Password: os.Getenv("TOKEN"),
+		Username: strings.TrimSuffix(os.Getenv("USERNAME"), "\n"),
+		Password: strings.TrimSuffix(os.Getenv("TOKEN"), "\n"),
 	}
 
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
@@ -48,6 +50,7 @@ func Update() error {
 		Progress: os.Stdout,
 		Auth:     auth,
 	})
+	fmt.Println(repository)
 	if err != nil {
 		return err
 	}
