@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/go-git/go-git/plumbing/transport/http"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/pkg/errors"
@@ -39,9 +40,15 @@ func Lint() error {
 func Update() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
+	auth := &http.BasicAuth{
+		Username: os.Getenv("HELM_USERNAME"),
+		Password: os.Getenv("TOKEN"),
+	}
+
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
-		URL:           fmt.Sprintf("https://%s@github.com/lab42/charts.git", os.Getenv("TOKEN")),
+		URL:           "https://%s@github.com/lab42/charts.git",
 		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", "registry")),
+		Auth:          auth,
 	})
 	if err != nil {
 		return err
@@ -68,7 +75,10 @@ func Update() error {
 
 	workTree, err := repository.Worktree()
 	workTree.AddGlob("./charts/*")
-	repository.Push(&git.PushOptions{})
+	repository.Push(&git.PushOptions{
+		Auth:       auth,
+		RemoteName: "origin",
+	})
 	return nil
 }
 
