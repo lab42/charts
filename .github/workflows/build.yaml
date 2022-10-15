@@ -46,6 +46,7 @@ jobs:
   Update-registry:
     runs-on: ubuntu-latest
     needs: lint
+    environment: main
     steps:
     - uses: actions/checkout@v3
 
