@@ -10,6 +10,7 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -42,8 +43,10 @@ func Update() error {
 	url := fmt.Sprintf("https://%s:%s@github.com/lab42/registry.git", os.Getenv("USERNAME"), os.Getenv("TOKEN"))
 
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
-		URL:      url,
-		Progress: os.Stdout,
+		URL:           url,
+		Progress:      os.Stdout,
+		ReferenceName: plumbing.ReferenceName("refs/heads/master"),
+		SingleBranch:  true,
 	})
 
 	spew.Dump(os.Getenv("USERNAME"))
