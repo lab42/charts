@@ -94,6 +94,7 @@ func Build() error {
 }
 
 func Push() error {
+	fmt.Println(os.Getenv("TOKEN"))
 	loginOptions := []registry.LoginOption{
 		registry.LoginOptBasicAuth(os.Getenv("USERNAME"), os.Getenv("TOKEN")),
 	}
@@ -113,7 +114,6 @@ func Push() error {
 		return err
 	}
 
-	fmt.Println(os.Getenv("TOKEN"))
 	for _, helmChartInfo := range helmCharts {
 		b, err := ioutil.ReadFile(fmt.Sprintf("./charts/%s-%s.tgz", helmChartInfo.Name, helmChartInfo.Version))
 		if err != nil {
