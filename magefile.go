@@ -41,7 +41,7 @@ func Update() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	auth := &http.BasicAuth{
-		Username: os.Getenv("HELM_USERNAME"),
+		Username: os.Getenv("USERNAME"),
 		Password: os.Getenv("TOKEN"),
 	}
 
