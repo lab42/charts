@@ -94,17 +94,14 @@ func Build() error {
 }
 
 func Push() error {
-	fmt.Println(os.Getenv("TOKEN"))
-	loginOptions := []registry.LoginOption{
-		registry.LoginOptBasicAuth(os.Getenv("USERNAME"), os.Getenv("TOKEN")),
-	}
 
-	client, err := registry.NewClient(registry.ClientOptDebug(true), registry.ClientOptEnableCache(false))
+	client, err := registry.NewClient()
 	if err != nil {
 		return err
 	}
 
-	if err := client.Login("ghcr.io/lab42/charts", loginOptions...); err != nil {
+	loginAction := action.NewRegistryLogin(&action.Configuration{RegistryClient: client})
+	if err := loginAction.Run(os.Stdout, "ghcr.io/lab42/charts", os.Getenv("USERNAME"), os.Getenv("TOKEN"), false); err != nil {
 		return err
 	}
 
