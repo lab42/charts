@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
@@ -78,8 +77,6 @@ func Update() error {
 	workTree.AddGlob("*.tgz")
 	workTree.AddGlob("*.yaml")
 
-	spew.Dump(workTree)
-
 	hash, err := workTree.Commit(os.Getenv("GITHUB_SHA"),
 		&git.CommitOptions{
 			All: true,
@@ -96,6 +93,7 @@ func Update() error {
 
 	log.Info().Msg("Commit hash: " + hash.String())
 
+	log.Info().Msg("Pushing registry")
 	repository.Push(&git.PushOptions{
 		Progress: os.Stdout,
 	})
