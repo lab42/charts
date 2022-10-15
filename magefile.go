@@ -45,7 +45,6 @@ func Update() error {
 	url := fmt.Sprintf("https://%s:%s@github.com/lab42/registry.git", os.Getenv("USERNAME"), os.Getenv("TOKEN"))
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
 		URL:           url,
-		Progress:      os.Stdout,
 		ReferenceName: plumbing.ReferenceName("refs/heads/main"),
 		SingleBranch:  true,
 	})
@@ -92,12 +91,9 @@ func Update() error {
 	}
 
 	log.Info().Msg("Commit hash: " + hash.String())
-
 	log.Info().Msg("Pushing registry")
-	repository.Push(&git.PushOptions{
-		Progress: os.Stdout,
-	})
-	return nil
+
+	return repository.Push(&git.PushOptions{})
 }
 
 func index(url string) error {
