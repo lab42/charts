@@ -57,7 +57,7 @@ jobs:
     - name: Add SSH key
       env:
         SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-      run: "mkdir -p ~/.ssh\nssh-keyscan github.com >> ~/.ssh/known_hosts\necho \"$SSH_PRIVATE_KEY\" > ~/.ssh/github_actions\nchmod 600 ~/.ssh/github_actions\nssh-agent -a $SSH_AUTH_SOCK > /dev/null  \nssh-add ~/.ssh/github_actions\n"
+      run: "mkdir -p ~/.ssh\nssh-keyscan github.com >> ~/.ssh/known_hosts\necho \"$(( secrets.SSH_PRIVATE_KEY ))\" > ~/.ssh/github_actions\nchmod 600 ~/.ssh/github_actions\nssh-agent -a $SSH_AUTH_SOCK > /dev/null  \nssh-add ~/.ssh/github_actions\n"
 
     - run: ~/go/bin/mage -v update
     - run: ls -al charts
