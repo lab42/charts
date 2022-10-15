@@ -4,11 +4,11 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -38,9 +38,14 @@ func Lint() error {
 func Update() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
+	auth := &http.TokenAuth{
+		Token: os.Getenv("TOKEN"),
+	}
+
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
-		URL:      fmt.Sprintf("https://%s:%s@github.com/lab42/registry.git", os.Getenv("USERNAME"), os.Getenv("TOKEN")),
+		URL:      "https://github.com/lab42/registry.git",
 		Progress: os.Stdout,
+		Auth:     auth,
 	})
 	if err != nil {
 		return err
@@ -73,6 +78,7 @@ func Update() error {
 
 	repository.Push(&git.PushOptions{
 		Progress: os.Stdout,
+		Auth:     auth,
 	})
 	return nil
 }
