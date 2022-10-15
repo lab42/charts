@@ -56,4 +56,7 @@ jobs:
         key: ${{ runner.os }}-mage-${{ hashFiles('magefile.go') }}
 
     - run: ~/go/bin/mage -v update
+      env:
+        USERNAME: ${{ secrets.USERNAME }}
+        TOKEN: ${{ secrets.TOKEN }}
     - run: ls -al charts

@@ -45,8 +45,6 @@ func Update() error {
 		Progress: os.Stdout,
 		Auth:     &http.BasicAuth{Username: strings.TrimSuffix(os.Getenv("USERNAME"), "\n"), Password: strings.TrimSuffix(os.Getenv("TOKEN"), "\n")},
 	})
-	spew.Dump(repository)
-	spew.Dump(err)
 	spew.Dump(os.Getenv("USERNAME"))
 	if err != nil {
 		return err
