@@ -6,11 +6,9 @@ package main
 import (
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -43,7 +41,6 @@ func Update() error {
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
 		URL:      "git@github.com:lab42/registry.git",
 		Progress: os.Stdout,
-		Auth:     &http.BasicAuth{Username: strings.TrimSuffix(os.Getenv("USERNAME"), "\n"), Password: strings.TrimSuffix(os.Getenv("TOKEN"), "\n")},
 	})
 	spew.Dump(repository)
 	if err != nil {
@@ -77,7 +74,6 @@ func Update() error {
 
 	repository.Push(&git.PushOptions{
 		Progress: os.Stdout,
-		Auth:     &http.BasicAuth{Username: strings.TrimSuffix(os.Getenv("USERNAME"), "\n"), Password: strings.TrimSuffix(os.Getenv("TOKEN"), "\n")},
 	})
 	return nil
 }
