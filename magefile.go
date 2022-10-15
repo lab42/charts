@@ -40,7 +40,6 @@ func Update() error {
 
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
 		URL:      fmt.Sprintf("https://%s:%s@github.com/lab42/registry.git", os.Getenv("USERNAME"), os.Getenv("TOKEN")),
-		Auth:     auth,
 		Progress: os.Stdout,
 	})
 	if err != nil {
