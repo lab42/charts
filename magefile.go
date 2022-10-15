@@ -6,7 +6,6 @@ package main
 import (
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/go-git/go-git/v5"
@@ -40,10 +39,11 @@ func Lint() error {
 func Update() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
+	auth := &http.BasicAuth{Username: os.Getenv("USERNAME"), Password: os.Getenv("TOKEN")}
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
 		URL:      "https://git@github.com/lab42/registry.git",
 		Progress: os.Stdout,
-		Auth:     &http.BasicAuth{Username: strings.TrimSuffix(os.Getenv("USERNAME"), "\n"), Password: strings.TrimSuffix(os.Getenv("TOKEN"), "\n")},
+		Auth:     auth,
 	})
 	spew.Dump(os.Getenv("USERNAME"))
 	if err != nil {
@@ -77,7 +77,7 @@ func Update() error {
 
 	repository.Push(&git.PushOptions{
 		Progress: os.Stdout,
-		Auth:     &http.BasicAuth{Username: strings.TrimSuffix(os.Getenv("USERNAME"), "\n"), Password: strings.TrimSuffix(os.Getenv("TOKEN"), "\n")},
+		Auth:     auth,
 	})
 	return nil
 }
