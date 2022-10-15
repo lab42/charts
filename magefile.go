@@ -39,7 +39,7 @@ func Lint() error {
 func Update() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
-	auth := &http.BasicAuth{Username: os.Getenv("USERNAME"), Password: os.Getenv("TOKEN")}
+	auth := &http.TokenAuth{Token: os.Getenv("TOKEN")}
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
 		URL:      "https://github.com/lab42/registry.git",
 		Progress: os.Stdout,
