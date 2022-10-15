@@ -45,7 +45,7 @@ func Update() error {
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
 		URL:           url,
 		Progress:      os.Stdout,
-		ReferenceName: plumbing.ReferenceName("refs/heads/master"),
+		ReferenceName: plumbing.ReferenceName("refs/heads/main"),
 		SingleBranch:  true,
 	})
 
@@ -71,7 +71,7 @@ func Update() error {
 		log.Info().Msg("Packaged: " + helmChart)
 	}
 
-	if err := index(); err != nil {
+	if err := index(url); err != nil {
 		return err
 	}
 
@@ -87,7 +87,7 @@ func Update() error {
 	return nil
 }
 
-func index() error {
+func index(url string) error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	out := filepath.Join("charts", "index.yaml")
@@ -97,7 +97,7 @@ func index() error {
 		mergeTo = out
 	}
 
-	i, err := repo.IndexDirectory("charts", "https://lab42.github.io/registry")
+	i, err := repo.IndexDirectory("charts", url)
 	if err != nil {
 		return err
 	}
