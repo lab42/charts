@@ -74,7 +74,8 @@ func Update() error {
 	}
 
 	workTree, err := repository.Worktree()
-	workTree.AddGlob("*")
+	workTree.AddGlob("*.tgz")
+	workTree.AddGlob("*.yaml")
 
 	spew.Dump(workTree)
 
