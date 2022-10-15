@@ -41,7 +41,7 @@ func Update() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
-		URL:      "https://github.com/lab42/registry.git",
+		URL:      "git@github.com:lab42/registry.git",
 		Progress: os.Stdout,
 		Auth:     &http.BasicAuth{Username: strings.TrimSuffix(os.Getenv("USERNAME"), "\n"), Password: strings.TrimSuffix(os.Getenv("TOKEN"), "\n")},
 	})
