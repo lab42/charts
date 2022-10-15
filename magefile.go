@@ -4,12 +4,10 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
@@ -46,10 +44,9 @@ func Update() error {
 	}
 
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
-		URL:           "https://github.com/lab42/registry.git",
-		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", "main")),
-		Auth:          auth,
-		Progress:      os.Stdout,
+		URL:      "https://github.com/lab42/registry.git",
+		Auth:     auth,
+		Progress: os.Stdout,
 	})
 	if err != nil {
 		return err
