@@ -4,11 +4,11 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/pkg/errors"
@@ -50,7 +50,7 @@ func Update() error {
 		Progress: os.Stdout,
 		Auth:     auth,
 	})
-	fmt.Println(repository)
+	spew.Dump(repository)
 	if err != nil {
 		return err
 	}
