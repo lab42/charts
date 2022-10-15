@@ -38,8 +38,9 @@ func Lint() error {
 func Update() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
-	auth := &http.TokenAuth{
-		Token: os.Getenv("TOKEN"),
+	auth := &http.BasicAuth{
+		Username: os.Getenv("USERNAME"),
+		Password: os.Getenv("TOKEN"),
 	}
 
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
