@@ -75,7 +75,7 @@ func Update() error {
 
 	workTree, err := repository.Worktree()
 	workTree.AddGlob("*")
-	if _, err := workTree.Commit(os.Getenv("GITHUB_SHA"), &git.CommitOptions{}); err != nil {
+	if _, err := workTree.Commit(os.Getenv("GITHUB_SHA"), &git.CommitOptions{All: true}); err != nil {
 		return nil
 	}
 
