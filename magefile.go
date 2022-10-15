@@ -94,7 +94,7 @@ func index() error {
 		mergeTo = out
 	}
 
-	i, err := repo.IndexDirectory("charts", "https://lab42.github.io/charts")
+	i, err := repo.IndexDirectory("charts", "https://lab42.github.io/registry")
 	if err != nil {
 		return err
 	}
