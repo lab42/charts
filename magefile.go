@@ -11,6 +11,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -40,17 +41,14 @@ func Lint() error {
 func Update() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
+	log.Info().Msg("Cloning registry")
 	url := fmt.Sprintf("https://%s:%s@github.com/lab42/registry.git", os.Getenv("USERNAME"), os.Getenv("TOKEN"))
-
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
 		URL:           url,
 		Progress:      os.Stdout,
 		ReferenceName: plumbing.ReferenceName("refs/heads/main"),
 		SingleBranch:  true,
 	})
-
-	spew.Dump(os.Getenv("USERNAME"))
-	spew.Dump(os.Getenv("TOKEN"))
 
 	if err != nil {
 		return err
@@ -77,9 +75,23 @@ func Update() error {
 
 	workTree, err := repository.Worktree()
 	workTree.AddGlob("*")
-	if _, err := workTree.Commit(os.Getenv("GITHUB_SHA"), &git.CommitOptions{All: true}); err != nil {
+
+	spew.Dump(workTree)
+
+	hash, err := workTree.Commit(os.Getenv("GITHUB_SHA"),
+		&git.CommitOptions{
+			All: true,
+			Author: &object.Signature{
+				Name:  "Dany Henriquez",
+				Email: "danyhenriquez86@gmail.com",
+			},
+		},
+	)
+	if err != nil {
 		return nil
 	}
+
+	log.Info().Msg("Commit hash: " + hash.String())
 
 	repository.Push(&git.PushOptions{
 		Progress: os.Stdout,
