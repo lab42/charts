@@ -45,7 +45,7 @@ jobs:
 
   Update-registry:
     runs-on: ubuntu-latest
-    needs: setup
+    needs: lint
     steps:
     - uses: actions/checkout@v3
     - uses: actions/checkout@v3
@@ -58,13 +58,5 @@ jobs:
         path: ~/go/bin/mage
         key: ${{ runner.os }}-mage-${{ hashFiles('magefile.go') }}
 
-    - run: ~/go/bin/mage -v package
-    - run: ~/go/bin/mage -v index
+    - run: mage -v update
     - run: ls -al charts
-    - run: |
-        cd charts
-        git config --global user.name $GITHUB_ACTOR
-        git config --global user.email "username@users.noreply.github.com"
-        git add -A
-        git commit -m $GITHUB_SHA
-        git push

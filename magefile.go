@@ -4,9 +4,12 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -32,9 +35,17 @@ func Lint() error {
 	return nil
 }
 
-// Build Helm packages
-func Package() error {
+// Update Helm registry
+func Update() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+
+	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
+		URL:           fmt.Sprintf("https://%s@github.com/lab42/charts.git", os.Getenv("TOKEN")),
+		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", "registry")),
+	})
+	if err != nil {
+		return err
+	}
 
 	helmCharts, err := filepath.Glob("./src/*")
 	if err != nil {
@@ -51,11 +62,17 @@ func Package() error {
 		log.Info().Msg("Packaged: " + helmChart)
 	}
 
+	if err := index(); err != nil {
+		return err
+	}
+
+	workTree, err := repository.Worktree()
+	workTree.AddGlob("./charts/*")
+	repository.Push(&git.PushOptions{})
 	return nil
 }
 
-// Index Helm packages
-func Index() error {
+func index() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	out := filepath.Join("charts", "index.yaml")
