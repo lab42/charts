@@ -84,7 +84,7 @@ func chartInfo(glob string) ([]HelmChart, error) {
 	return out, nil
 }
 
-func Package() error {
+func Build() error {
 	helmCharts, err := chartInfo("./src/*")
 	if err != nil {
 		return err
