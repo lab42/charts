@@ -46,7 +46,7 @@ func Update() error {
 	}
 
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
-		URL:           "https://%s@github.com/lab42/charts.git",
+		URL:           "https://github.com/lab42/charts.git",
 		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", "registry")),
 		Auth:          auth,
 	})
