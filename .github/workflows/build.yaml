@@ -56,7 +56,7 @@ jobs:
 
     - name: Add SSH key
       run: |
-        ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+        eval $(ssh-agent -s)
         echo "$(( secrets.SSH_PRIVATE_KEY ))" | ssh-add -
 
     - run: ~/go/bin/mage -v update
