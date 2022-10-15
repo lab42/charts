@@ -49,6 +49,7 @@ func Update() error {
 		URL:           "https://github.com/lab42/registry.git",
 		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", "main")),
 		Auth:          auth,
+		Progress:      os.Stdout,
 	})
 	if err != nil {
 		return err
@@ -82,6 +83,7 @@ func Update() error {
 	repository.Push(&git.PushOptions{
 		Auth:       auth,
 		RemoteName: "origin",
+		Progress:   os.Stdout,
 	})
 	return nil
 }
