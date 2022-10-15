@@ -55,7 +55,7 @@ jobs:
         key: ${{ runner.os }}-mage-${{ hashFiles('magefile.go') }}
 
     - run: |
-        eval `ssh-agent`
-        echo "$SSH_PRIVATE_KEY" | ssh-add -
+        ssh-agent
+        echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - run: ~/go/bin/mage -v update
     - run: ls -al charts
