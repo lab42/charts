@@ -41,7 +41,7 @@ func Update() error {
 
 	auth := &http.BasicAuth{Username: os.Getenv("USERNAME"), Password: os.Getenv("TOKEN")}
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
-		URL:      "https://git@github.com/lab42/registry.git",
+		URL:      "https://github.com/lab42/registry.git",
 		Progress: os.Stdout,
 		Auth:     auth,
 	})
