@@ -67,8 +67,11 @@ jobs:
         path: ~/go/bin/mage
         key: ${{ runner.os }}-mage-${{ hashFiles('magefile.go') }}
 
-    - name: Update registry
-      run: ~/go/bin/mage -v update
+    - name: Build Helm packages
+      run: ~/go/bin/mage build
+
+    - name: Push Helm packages to registry
+      run: ~/go/bin/mage push
       env:
         USERNAME: ${{ secrets.USERNAME }}
         TOKEN: ${{ secrets.TOKEN }}
