@@ -46,8 +46,8 @@ func Update() error {
 	}
 
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
-		URL:           "https://github.com/lab42/charts.git",
-		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", "registry")),
+		URL:           "https://github.com/lab42/registry.git",
+		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", "main")),
 		Auth:          auth,
 	})
 	if err != nil {
@@ -74,7 +74,7 @@ func Update() error {
 	}
 
 	workTree, err := repository.Worktree()
-	workTree.AddGlob("./*")
+	workTree.AddGlob("*")
 	if _, err := workTree.Commit(os.Getenv("GITHUB_SHA"), &git.CommitOptions{}); err != nil {
 		return nil
 	}
