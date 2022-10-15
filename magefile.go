@@ -4,12 +4,12 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -39,12 +39,11 @@ func Lint() error {
 func Update() error {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
-	auth := &http.BasicAuth{Username: os.Getenv("USERNAME"), Password: os.Getenv("TOKEN")}
+	url := fmt.Sprintf("https://%s:%s@github.com/lab42/registry.git", os.Getenv("USERNAME"), os.Getenv("TOKEN"))
 
 	repository, err := git.PlainClone("./charts", false, &git.CloneOptions{
-		URL:      "https://github.com/lab42/registry.git",
+		URL:      url,
 		Progress: os.Stdout,
-		Auth:     auth,
 	})
 
 	spew.Dump(os.Getenv("USERNAME"))
@@ -81,7 +80,6 @@ func Update() error {
 
 	repository.Push(&git.PushOptions{
 		Progress: os.Stdout,
-		Auth:     auth,
 	})
 	return nil
 }
