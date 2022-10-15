@@ -56,6 +56,6 @@ jobs:
 
     - run: |
         eval `ssh-agent`
-        echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+        echo "$SSH_PRIVATE_KEY" | ssh-add -
     - run: ~/go/bin/mage -v update
     - run: ls -al charts
