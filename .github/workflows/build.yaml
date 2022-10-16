@@ -35,6 +35,32 @@ jobs:
         path: ~/go/bin/mage
         key: ${{ runner.os }}-mage-${{ hashFiles('magefile.go') }}
 
+  test:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup go
+      uses: actions/setup-go@v3
+      with:
+        go-version: '1.19'
+
+    - name: Go cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+          ~/.magefile
+        key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
+
+    - name: Go mod check
+      run: |
+        go mod tidy
+        git diff --exit-code
+
   lint:
     runs-on: ubuntu-latest
     needs: setup
