@@ -35,7 +35,7 @@ securityContext:
     - ALL
   readOnlyRootFilesystem: true
   runAsNonRoot: true
-  runAsUser: appuser
+  runAsUser: 1111
 
 service:
   type: ClusterIP
