@@ -125,10 +125,11 @@ func Build() error {
 	}
 
 	for _, helmChartInfo := range helmCharts {
-		fmt.Println(latestReleaseVersion(helmChartInfo.Name))
 		pkg := action.NewPackage()
 		pkg.Destination = "./charts"
-		pkg.AppVersion = latestReleaseVersion(helmChartInfo.Name)
+		if helmChartInfo.Name != "namespace" {
+			pkg.AppVersion = latestReleaseVersion(helmChartInfo.Name)
+		}
 
 		if _, err := pkg.Run(fmt.Sprintf("./src/%s", helmChartInfo.Name), make(map[string]interface{})); err != nil {
 			log.Error().Err(err)
