@@ -2,14 +2,14 @@
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "auth-svc.fullname" . }}
+  name: {{ include "one.fullname" . }}
   labels:
-    {{- include "auth-svc.labels" . | nindent 4 }}
+    {{- include "one.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "auth-svc.fullname" . }}
+    name: {{ include "one.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:
