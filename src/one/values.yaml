@@ -34,13 +34,20 @@ securityContext:
     - ALL
   readOnlyRootFilesystem: true
   runAsNonRoot: true
+<<<<<<< HEAD:src/one/values.yaml
   runAsUser: 1000
+=======
+  runAsUser: 1111
+>>>>>>> main:src/nginx-default-backend/values.yaml
 
 service:
   type: ClusterIP
   port: 80
+<<<<<<< HEAD:src/one/values.yaml
 
 containerPort: 1234
+=======
+>>>>>>> main:src/nginx-default-backend/values.yaml
 
 ingress:
   enabled: false

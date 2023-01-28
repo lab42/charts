@@ -6,8 +6,10 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -41,6 +43,17 @@ type HelmChart struct {
 	Description string `yaml:"description"`
 	Type        string `yaml:"type"`
 	Version     string `yaml:"version"`
+	AppVersion  string `yaml:"appVersion"`
+}
+
+type GithubRelease struct {
+	TagName         string    `json:"tag_name"`
+	Name            string    `json:"name"`
+	TargetCommitish string    `json:"target_commitish"`
+	Draft           bool      `json:"draft"`
+	Prerelease      bool      `json:"prerelease"`
+	CreatedAt       time.Time `json:"created_at"`
+	PublishedAt     time.Time `json:"published_at"`
 }
 
 // Return Helm charts info
@@ -49,6 +62,7 @@ func chartInfo(glob string) ([]HelmChart, error) {
 
 	helmCharts, err := filepath.Glob(glob)
 	if err != nil {
+		log.Error().Err(err)
 		return out, err
 	}
 
@@ -57,12 +71,14 @@ func chartInfo(glob string) ([]HelmChart, error) {
 			fmt.Sprintf("%s/Chart.yaml", helmChart),
 		)
 		if err != nil {
+			log.Error().Err(err)
 			return out, err
 		}
 
 		var helmChartYaml HelmChart
 		err = yaml.Unmarshal(b, &helmChartYaml)
 		if err != nil {
+			log.Error().Err(err)
 			return out, err
 		}
 
@@ -70,6 +86,35 @@ func chartInfo(glob string) ([]HelmChart, error) {
 	}
 
 	return out, nil
+}
+
+func latestReleaseVersion(repository string) string {
+	url := fmt.Sprintf("https://api.github.com/repos/lab42/%s/releases/latest", repository)
+	var bearer = "Bearer " + os.Getenv("TOKEN")
+
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", bearer)
+	req.Header.Add("Accept", "application/vnd.github+json")
+
+	// Send req using http Client
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Panic().Err(err)
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Panic().Err(err)
+	}
+
+	var githubRelease GithubRelease
+	if err := yaml.Unmarshal(body, &githubRelease); err != nil {
+		log.Panic().Err(err)
+	}
+
+	return githubRelease.Name
 }
 
 func Build() error {
@@ -82,6 +127,9 @@ func Build() error {
 	for _, helmChartInfo := range helmCharts {
 		pkg := action.NewPackage()
 		pkg.Destination = "./charts"
+		if helmChartInfo.Name != "namespace" {
+			pkg.AppVersion = latestReleaseVersion(helmChartInfo.Name)
+		}
 
 		if _, err := pkg.Run(fmt.Sprintf("./src/%s", helmChartInfo.Name), make(map[string]interface{})); err != nil {
 			log.Error().Err(err)
