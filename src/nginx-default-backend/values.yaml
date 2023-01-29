@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/lab42/nginx-default-backend
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.2.1"
+  tag: "v0.0.2"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -35,11 +35,11 @@ securityContext:
     - ALL
   readOnlyRootFilesystem: true
   runAsNonRoot: true
-  runAsUser: 1111
+  runAsUser: appuser
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8080
 
 ingress:
   enabled: false
