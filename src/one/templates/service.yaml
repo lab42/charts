@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "gql-gateway.fullname" . }}
+  name: {{ include "one.fullname" . }}
   labels:
-    {{- include "gql-gateway.labels" . | nindent 4 }}
+    {{- include "one.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "gql-gateway.selectorLabels" . | nindent 4 }}
+    {{- include "one.selectorLabels" . | nindent 4 }}

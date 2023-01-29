@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "auth-svc.fullname" . }}
+  name: {{ include "one.fullname" . }}
   labels:
-    {{- include "auth-svc.labels" . | nindent 4 }}
+    {{- include "one.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "auth-svc.selectorLabels" . | nindent 6 }}
+      {{- include "one.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "auth-svc.selectorLabels" . | nindent 8 }}
+        {{- include "one.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "auth-svc.serviceAccountName" . }}
+      serviceAccountName: {{ include "one.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -35,16 +35,16 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 1234
+              containerPort: {{ .Values.containerPort }}
               protocol: TCP
+          env:
+            {{- toYaml .Values.env | nindent 12 }}
+          envFrom:
+            {{- toYaml .Values.envFrom | nindent 12 }}
           livenessProbe:
-            httpGet:
-              path: /
-              port: http
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
-            httpGet:
-              path: /
-              port: http
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
