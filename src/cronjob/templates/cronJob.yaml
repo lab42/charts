@@ -1,9 +1,9 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "cronJob.fullname" . }}
+  name: {{ include "cronjob.fullname" . }}
   labels:
-    {{- include "cronJob.labels" . | nindent 4 }}
+    {{- include "cronjob.labels" . | nindent 4 }}
 spec:
   schedule: {{ .Values.schedule | quote }}
   jobTemplate:
@@ -13,14 +13,14 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "cronJob.selectorLabels" . | nindent 8 }}
+        {{- include "cronjob.selectorLabels" . | nindent 8 }}
     spec:
       template:
         {{- with .Values.imagePullSecrets }}
         imagePullSecrets:
           {{- toYaml . | nindent 10 }}
         {{- end }}
-        serviceAccountName: {{ include "cronJob.serviceAccountName" . }}
+        serviceAccountName: {{ include "cronjob.serviceAccountName" . }}
         securityContext:
           {{- toYaml .Values.podSecurityContext | nindent 10 }}
         containers:
