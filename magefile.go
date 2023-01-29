@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -167,7 +166,7 @@ func Push() error {
 			return err
 		}
 
-		info, err := client.Push(b, fmt.Sprintf("ghcr.io/lab42/charts/%s:%s", strings.ToLower(helmChartInfo.Name), helmChartInfo.Version))
+		info, err := client.Push(b, fmt.Sprintf("ghcr.io/lab42/charts/%s:%s", helmChartInfo.Name, helmChartInfo.Version))
 		if err != nil {
 			log.Error().Err(err)
 			return err
