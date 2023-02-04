@@ -5,7 +5,9 @@ metadata:
   name: {{ include "cronjob.fullname" . }}
   labels:
     {{- include "cronjob.labels" . | nindent 4 }}
-    {{- toYaml .Values.labels | nindent 4 }}
+    {{- with .Values.labels }}
+      {{- toYaml .Values.labels | nindent 4 }}
+    {{- end }}  
   {{- with .Values.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

@@ -1,12 +1,14 @@
 {{- if .Values.autoscaling.enabled }}
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   namespace: {{ .Release.Namespace }}
   name: {{ include "one.fullname" . }}
   labels:
     {{- include "one.labels" . | nindent 4 }}
-    {{- toYaml .Values.labels | nindent 4 }}
+    {{- with .Values.labels }}
+      {{- toYaml .Values.labels | nindent 4 }}
+    {{- end }}
   {{- with .Values.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
