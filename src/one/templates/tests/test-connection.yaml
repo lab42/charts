@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
+  namespace: {{ .Release.Namespace }}
   name: "{{ include "one.fullname" . }}-test-connection"
   labels:
     {{- include "one.labels" . | nindent 4 }}
