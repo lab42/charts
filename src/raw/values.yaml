@@ -1,11 +1,8 @@
 # Common labels merged into all objects defined in resources.
-labels:
-  environment: production
-  app: nginx
+labels: {}
 
 # Common annotations merged into all objects defined in resources.
-annotations:
-  foo: bar
+annotations: {}
 
 # name: Foobar # See resources for explanation.
 
