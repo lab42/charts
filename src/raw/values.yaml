@@ -1,0 +1,18 @@
+# Common labels merged into all objects defined in resources.
+labels:
+  environment: production
+  app: nginx
+
+# Common annotations merged into all objects defined in resources.
+annotations:
+  foo: bar
+
+# name: Foobar # See resources for explanation.
+
+resources: 
+#  - |
+#    apiVersion: v1
+#    kind: Namespace
+#    metadata:
+#      namespace: {{ .Release.Namespace }}
+#      name: {{ .Values.name }} # Example: Values can be used in the reosurces
