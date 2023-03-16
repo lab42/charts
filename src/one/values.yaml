@@ -74,13 +74,13 @@ env: {}
 
 envFrom: {}
 
-livenessProbe:
-  grpc:
-    port: 1234
+livenessProbe: {}
+  # grpc:
+  #   port: 1234
 
-readinessProbe:
-  grpc:
-    port: 1234
+readinessProbe: {}
+  # grpc:
+  #   port: 1234
 
 autoscaling:
   enabled: true
