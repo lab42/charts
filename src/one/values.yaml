@@ -17,6 +17,11 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+hostNetwork: false
+
+strategy: {}
+  # type: recreate
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
