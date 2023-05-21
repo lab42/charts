@@ -8,9 +8,27 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      matchLabelKeys:
+        - pod-template-hash
+      selector:
+        {{- include "one.selectorLabels" . | nindent 12 }}
   containers:
     - name: wget
-      image: busybox
+      securityContext:
+        {{- toYaml .Values.securityContext | nindent 8 }}
+      resources:
+        limits:
+          cpu: 50m
+          memory: 64Mi
+        requests:
+          cpu: 50m
+          memory: 64Mi
+      image: busybox:1.35
       command: ['wget']
       args: ['{{ include "one.fullname" . }}:{{ .Values.service.port }}']
+  pullPolicy: Always
   restartPolicy: Never
