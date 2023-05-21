@@ -12,8 +12,6 @@ spec:
     - maxSkew: 1
       topologyKey: kubernetes.io/hostname
       whenUnsatisfiable: DoNotSchedule
-      matchLabelKeys:
-        - pod-template-hash
       selector:
         {{- include "one.selectorLabels" . | nindent 8 }}
   containers:
