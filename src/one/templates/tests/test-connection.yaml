@@ -15,7 +15,7 @@ spec:
       matchLabelKeys:
         - pod-template-hash
       selector:
-        {{- include "one.selectorLabels" . | nindent 12 }}
+        {{- include "one.selectorLabels" . | nindent 8 }}
   containers:
     - name: wget
       securityContext:
