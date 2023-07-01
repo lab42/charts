@@ -4,7 +4,7 @@ on: push
 
 jobs:
   setup:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -36,7 +36,7 @@ jobs:
         key: ${{ runner.os }}-mage-${{ hashFiles('magefile.go') }}
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     needs: setup
     steps:
     - name: Checkout
@@ -62,7 +62,7 @@ jobs:
         git diff --exit-code
 
   lint:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     needs: setup
     steps:
     - name: Checkout
@@ -77,7 +77,7 @@ jobs:
     - run: ~/go/bin/mage lint
 
   Update-registry:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     needs: lint
     if: github.ref == 'refs/heads/main'
     steps:
