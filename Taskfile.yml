@@ -1,0 +1,47 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - task --list
+    silent: true
+  
+  githooks:
+    desc: Setup git hooks
+    cmds: 
+      - git config core.hooksPath .githooks
+    silent: true
+
+  lint:
+    desc: Lint all Helm charts
+    deps: [check:helm:install]
+    cmds:
+      - helm lint src/*
+    silent: true
+
+  package:
+    desc: Package all Helm charts
+    deps: [check:helm:install]
+    cmds:
+      - helm package --destination repo src/*
+    silent: true
+    preconditions:
+      - mkdir -p repo
+
+  index:
+    desc: Generate Helm repository index
+    deps: [check:helm:install]
+    cmds:
+      - helm repo index repo
+    silent: true
+    preconditions:
+      - mkdir -p repo
+
+  # Private tasks
+  check:helm:install:
+    desc: Lint all Helm charts
+    cmds:
+      - command -v helm
+    silent: true

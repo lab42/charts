@@ -1,0 +1,3 @@
+task lint
+task package
+task index
