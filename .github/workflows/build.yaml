@@ -4,97 +4,34 @@ on: push
 
 jobs:
   setup:
-    runs-on: [self-hosted]
+    runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Setup go
-      uses: actions/setup-go@v3
+    - name: "[Setup] Checkout"
+      uses: actions/checkout@v4
       with:
-        go-version: '1.19'
+        fetch-depth: 0
 
-    - name: Go cache
-      uses: actions/cache@v3
+    - name: "[Setup] Install Task"
+      uses: arduino/setup-task@v2
+
+    - name: "[Setup] Install Helm"
+      uses: azure/setup-helm@v4.2.0
+    
+    - name: "[Helm] Install Helm"
+      run: task lint
+
+    - name: "[Helm] Install Helm"
+      run: task package
+
+    - name: "[Helm] Install Helm"
+      run: task index
+
+    - name: "[Check] Dirty repository"
+      run: git diff --exit-code
+
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v4
+      if: github.ref == 'refs/heads/main'
       with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-          ~/.magefile
-        key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
-
-    - name: Install mage
-      run: go install github.com/magefile/mage@latest
-
-    - name: Compile mage
-      run: mage -compile ~/go/bin/mage
-
-    - name: Mage cache
-      uses: actions/cache@v3
-      with:
-        path: ~/go/bin/mage
-        key: ${{ runner.os }}-mage-${{ hashFiles('magefile.go') }}
-
-  test:
-    runs-on: [self-hosted]
-    needs: setup
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Setup go
-      uses: actions/setup-go@v3
-      with:
-        go-version: '1.19'
-
-    - name: Go cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-          ~/.magefile
-        key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
-
-    - name: Go mod check
-      run: |
-        go mod tidy
-        git diff --exit-code
-
-  lint:
-    runs-on: [self-hosted]
-    needs: setup
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Mage cache
-      uses: actions/cache@v3
-      with:
-        path: ~/go/bin/mage
-        key: ${{ runner.os }}-mage-${{ hashFiles('magefile.go') }}
-
-    - run: ~/go/bin/mage lint
-
-  Update-registry:
-    runs-on: [self-hosted]
-    needs: lint
-    if: github.ref == 'refs/heads/main'
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Mage cache
-      uses: actions/cache@v3
-      with:
-        path: ~/go/bin/mage
-        key: ${{ runner.os }}-mage-${{ hashFiles('magefile.go') }}
-
-    - name: Build Helm packages
-      run: ~/go/bin/mage build
-
-    - name: Push Helm packages to registry
-      run: ~/go/bin/mage push
-      env:
-        USERNAME: ${{ secrets.USERNAME }}
-        TOKEN: ${{ secrets.TOKEN }}
+        github_token: ${{ secrets.TOKEN }}
+        publish_dir: ./repo 

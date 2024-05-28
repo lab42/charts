@@ -2,9 +2,9 @@ apiVersion: v1
 entries:
   cronjob:
   - apiVersion: v2
-    created: "2024-05-28T22:17:35.026345579+02:00"
+    created: "2024-05-28T22:18:19.431738579+02:00"
     description: A Helm chart for Kubernetes
-    digest: 2026134185dd1072b6546c288076bf46b3d861060ac2c1f68d05952f94dfd377
+    digest: 4145e3160191fae717e66c16a6ec1f937940405e64be5c5a796f75b9b1b65c10
     name: cronjob
     type: application
     urls:
@@ -12,9 +12,9 @@ entries:
     version: 0.1.0
   deployment:
   - apiVersion: v2
-    created: "2024-05-28T22:17:35.026848198+02:00"
+    created: "2024-05-28T22:18:19.432328925+02:00"
     description: A Helm chart for Kubernetes
-    digest: 5acf02c169a25cf619a651c6aab42bd46bf3314669d15f4200193aaf4047b6e7
+    digest: 5de86823399050adfcef7670ac26ac06f4c6ac444c749ac44cad6829a99926b9
     name: deployment
     type: application
     urls:
@@ -23,9 +23,9 @@ entries:
   mirror:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-05-28T22:17:35.027321728+02:00"
+    created: "2024-05-28T22:18:19.432620669+02:00"
     description: A Helm chart for Kubernetes
-    digest: 2400391017fee130d6e1b2c2bc4bcd726ab7937395c28a4cdee9dbd2854df329
+    digest: dc5b506283a37db74c05e48ec0cb140cc2abc4575c0124026f1d59946e0e82fb
     name: mirror
     type: application
     urls:
@@ -34,9 +34,9 @@ entries:
   namespace:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-05-28T22:17:35.027534022+02:00"
+    created: "2024-05-28T22:18:19.432739339+02:00"
     description: A Helm chart for Kubernetes
-    digest: 04ea4a7b4059da11bf0d41f96a4d50e7fcf283f9d67c980f2d7c7dc9583075e5
+    digest: af6144990702b96f699ccdd65d87b70f15e2394a59b33dc1698f7e4492b7af0f
     name: namespace
     type: application
     urls:
@@ -44,12 +44,12 @@ entries:
     version: 0.1.0
   raw:
   - apiVersion: v2
-    created: "2024-05-28T22:17:35.027730968+02:00"
+    created: "2024-05-28T22:18:19.432837924+02:00"
     description: A Helm chart for Kubernetes
-    digest: 96ad97603084dcd538b3e671cf37feb8eb730b9e0a37a37bca21d3f527e989ef
+    digest: 70e5cc5cf59f9e715c3001c0bd4c0ec808bb9a846cd52ca49a836fe001f80859
     name: raw
     type: application
     urls:
     - raw-0.1.0.tgz
     version: 0.1.0
-generated: "2024-05-28T22:17:35.025791498+02:00"
+generated: "2024-05-28T22:18:19.431069878+02:00"
