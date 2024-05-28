@@ -11,6 +11,7 @@ tasks:
   githooks:
     desc: Setup git hooks
     cmds: 
+      - chmod a+x .githooks/*
       - git config core.hooksPath .githooks
     silent: true
 
