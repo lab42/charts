@@ -1,0 +1,7 @@
+{{- $template := fromYaml (include "resource.resource" .) -}}
+{{- range $resourceName, $resourceSpec := .Values.resources }}
+---
+{{- $renderedSpec := tpl (toYaml $resourceSpec) $ | fromYaml }}
+{{- $mergedSpec := merge $template $renderedSpec }}
+{{ toYaml $mergedSpec | nindent 0 -}}
+{{- end }}

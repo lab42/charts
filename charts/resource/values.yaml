@@ -1,0 +1,54 @@
+replicaCount: 1
+image:
+  repository: nginx
+  tag: latest
+secret:
+  username: user
+  password: pass
+  
+labels:
+  foo: bar
+
+annotations:
+  foo: bar
+
+resources:
+  configmap:
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: '{{ .Release.Name }}-configmap'
+    data:
+      key1: value1
+      key2: value2
+
+  secret:
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: '{{ .Release.Name }}-secret'
+    type: Opaque
+    stringData:
+      username: '{{ .Values.secret.username }}'
+      password: '{{ .Values.secret.password }}'
+
+  deployment:
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: '{{ .Release.Name }}-deployment'
+    spec:
+      replicas: '{{ .Values.replicaCount }}'
+      selector:
+        matchLabels:
+          app: '{{ .Release.Name }}'
+      template:
+        metadata:
+          labels:
+            app: '{{ .Release.Name }}'
+        spec:
+          containers:
+          - name: '{{ .Chart.Name }}'
+            image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
+            ports:
+            - containerPort: 80

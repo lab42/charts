@@ -1,37 +1,73 @@
-name: Helm
+name: Package and Push Helm Charts
 
-on: push
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  HELM_EXPERIMENTAL_OCI: 1
 
 jobs:
-  setup:
+  package-and-push:
     runs-on: ubuntu-latest
     steps:
-    - name: "[Setup] Checkout"
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v2
       with:
         fetch-depth: 0
 
-    - name: "[Setup] Install Task"
-      uses: arduino/setup-task@v2
-
-    - name: "[Setup] Install Helm"
-      uses: azure/setup-helm@v4.2.0
-    
-    - name: "[Helm] Install Helm"
-      run: task lint
-
-    - name: "[Helm] Install Helm"
-      run: task package
-
-    - name: "[Helm] Install Helm"
-      run: task index
-
-    - name: "[Check] Dirty repository"
-      run: git diff --exit-code
-
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v4
-      if: github.ref == 'refs/heads/main'
+    - name: Set up Helm
+      uses: azure/setup-helm@v3
       with:
-        github_token: ${{ secrets.TOKEN }}
-        publish_dir: ./repo 
+        version: v3.8.0
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Package and Push Helm charts
+      run: |
+        for chart in charts/*; do
+          if [ -d "$chart" ]; then
+            chart_name=$(basename "$chart")
+            helm package "$chart"
+            helm push "${chart_name}"*.tgz oci://ghcr.io/${{ github.repository_owner }}/helm-charts
+          fi
+        done
+
+    - name: Update Helm chart versions
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        COMMIT_MSG="chore(release): bump chart versions\n\n"
+        CHANGED=false
+        
+        for chart in charts/*; do
+          if [ -d "$chart" ]; then
+            cd "$chart"
+            if git diff --quiet HEAD^ -- .; then
+              echo "No changes in $chart"
+            else
+              echo "Changes detected in $chart"
+              CHANGED=true
+              CURRENT_VERSION=$(helm show chart . | grep version | cut -d' ' -f2)
+              NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+              sed -i "s/version: $CURRENT_VERSION/version: $NEW_VERSION/" Chart.yaml
+              COMMIT_MSG+="- ${chart#*/}: ${CURRENT_VERSION} → ${NEW_VERSION}\n"
+            fi
+            cd ../..
+          fi
+        done
+        
+        if [ "$CHANGED" = true ]; then
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add charts/*/Chart.yaml
+          git commit -m "$COMMIT_MSG"
+          git push
+        else
+          echo "No charts were modified. Skipping version bump."
+        fi

@@ -1,9 +1,0 @@
-# Default values for namespace.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-name: ""
-
-labels: {}
-
-annotations: {}
