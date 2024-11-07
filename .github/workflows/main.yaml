@@ -15,7 +15,6 @@ jobs:
       matrix:
         include:
           - chart-path: ./charts/kdns
-            chart-name: "kdns"
     steps:
       - name: "[Setup] repository"
         uses: actions/checkout@v4
@@ -47,4 +46,4 @@ jobs:
       - name: "[CD] Push Helm Chart to GHCR"
         run: |
           # Push the packaged chart to GHCR using chart name and version
-          helm push ${{ matrix.chart-path }}-${{ env.chart_version }}.tgz oci://ghcr.io/${{ github.repository_owner }}/charts/${{ matrix.chart-name }}
+          helm push ${{ matrix.chart-path }}-${{ env.chart_version }}.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
