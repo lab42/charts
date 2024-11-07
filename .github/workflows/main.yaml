@@ -3,13 +3,15 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'charts/**'
 permissions:
   contents: write
   id-token: write
   packages: write
 jobs:
   release:
-    name: Publish Helm Charts to GHCR
+    name: Publish Chart
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -47,4 +49,4 @@ jobs:
       - name: "[CD] Push Helm Chart to GHCR"
         run: |
           # Push the packaged chart to GHCR using chart name and version
-          helm push ${{ matrix.chart-path }}-${{ env.chart_version }}.tgz oci://ghcr.io/${{ github.repository_owner }}/charts/$(basename ${{ matrix.chart-path }})
+          helm push ${{ matrix.chart-path }}-${{ env.chart_version }}.tgz oci://ghcr.io/${{ github.repository_owner }}/charts/${{ matrix.chart-name }}
