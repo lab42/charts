@@ -1,0 +1,50 @@
+name: Main
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: write
+  id-token: write
+  packages: write
+jobs:
+  release:
+    name: Publish Helm Charts to GHCR
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - chart-path: ./charts/kdns
+            chart-name: "kdns"
+    steps:
+      - name: "[Setup] repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: "[Setup] Install yq"
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+          sudo chmod +x /usr/bin/yq
+      - name: "[Setup] Helm"
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.8.0 # Specify Helm version
+      - name: "[Auth] Log in to GHCR"
+        env:
+          CR_PAT: ${{ secrets.TOKEN }}
+        run: echo $CR_PAT | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: "[Setup] Get Chart Version"
+        id: chart_version
+        run: |
+          # Extract version from Chart.yaml using yq
+          VERSION=$(yq '.version' "${{ matrix.chart-path }}/Chart.yaml")
+          echo "Chart version is $VERSION"
+          echo "chart_version=$VERSION" >> $GITHUB_ENV
+      - name: "[Build] Package Helm Chart"
+        run: |
+          # Package the chart with extracted version
+          helm package "${{ matrix.chart-path }}" --version "${{ env.chart_version }}" -d ./charts
+      - name: "[CD] Push Helm Chart to GHCR"
+        run: |
+          # Push the packaged chart to GHCR using chart name and version
+          helm push ${{ matrix.chart-path }}-${{ env.chart_version }}.tgz oci://ghcr.io/${{ github.repository_owner }}/charts/$(basename ${{ matrix.chart-path }})
