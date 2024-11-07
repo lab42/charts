@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'charts/**'
 permissions:
   contents: write
   id-token: write
