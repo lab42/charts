@@ -39,11 +39,22 @@ jobs:
           VERSION=$(yq '.version' "${{ matrix.chart-path }}/Chart.yaml")
           echo "Chart version is $VERSION"
           echo "chart_version=$VERSION" >> $GITHUB_ENV
+
+          helm show chart oci://ghcr.io/lab42/charts/kdns --version 123.4.5
+      - name: "[Setup] Check version"
+        id: chart_check
+        continue-on-error: true # This prevents the workflow from failing immediately
+        run: |
+          chart_name=$(basename ${{ matrix.chart-path }})
+          echo "Checking if chart ${chart_name} version ${{ env.chart_version }} already exists..."
+          helm show chart oci://ghcr.io/${{ github.repository_owner }}/charts/${chart_name} --version "${{ env.chart_version }}"
       - name: "[Build] Package Helm Chart"
+        if: steps.chart_check.outcome == 'failure'  # Only run if chart does not exist
         run: |
           # Package the chart with extracted version
           helm package "${{ matrix.chart-path }}" --version "${{ env.chart_version }}" -d ./charts
       - name: "[CD] Push Helm Chart to GHCR"
+        if: steps.chart_check.outcome == 'failure'  # Only run if chart does not exist
         run: |
           # Push the packaged chart to GHCR using chart name and version
           helm push ${{ matrix.chart-path }}-${{ env.chart_version }}.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
