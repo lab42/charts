@@ -24,7 +24,8 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      hostNetwork: true  # This exposes the pod on the host network
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
