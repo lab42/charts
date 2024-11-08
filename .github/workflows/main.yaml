@@ -39,8 +39,6 @@ jobs:
           VERSION=$(yq '.version' "${{ matrix.chart-path }}/Chart.yaml")
           echo "Chart version is $VERSION"
           echo "chart_version=$VERSION" >> $GITHUB_ENV
-
-          helm show chart oci://ghcr.io/lab42/charts/kdns --version 123.4.5
       - name: "[Setup] Check version"
         id: chart_check
         continue-on-error: true # This prevents the workflow from failing immediately
