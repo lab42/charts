@@ -27,7 +27,7 @@ jobs:
       - name: "[Setup] Helm"
         uses: azure/setup-helm@v4
         with:
-          version: v3.21.0 # Specify Helm version
+          version: v3.21.1 # Specify Helm version
       - name: "[Auth] Log in to GHCR"
         env:
           CR_PAT: ${{ secrets.TOKEN }}
